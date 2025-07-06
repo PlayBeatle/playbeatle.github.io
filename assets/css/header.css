@@ -1,0 +1,141 @@
+header.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 1rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+header.container {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.toggles {
+  display: flex;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 250px;
+  height: 100%;
+  transform: translateX(100%); 
+  transition: transform 0.4s ease;
+  z-index: 1000;
+  overflow-x: hidden;
+}
+
+.sidebar.active {
+  transform: translateX(0); 
+}
+
+.sidebar a {
+  padding: 10px 8px 10px 8px;
+  text-decoration: none;
+  display: block;
+  transition: 0.3s;
+  font-weight: bold;
+}
+
+.sidebar .closebtn {
+  cursor: pointer;
+  position: absolute;
+  right: 20px;
+}
+
+
+.openbtn,
+.modeswitch {
+  cursor: pointer;
+  background-color: transparent !important;
+  border: none;
+  margin: 0px !important;
+  align-items: center;
+  display: flex;
+  padding: 0.5rem 1rem;
+}
+
+.modeswitch {
+  margin-right: 15px !important;
+}
+
+#logo {
+  align-items: center;
+  display: flex;
+}
+
+
+@media (min-width: 1200px) {
+  #logo {
+    height: 90px;
+  }
+  .toggles .modeswitch svg {
+    width: 30px;
+    height: 30px;
+  }
+
+  .toggles .openbtn svg {
+    width: 46px;
+    height: 46px;
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+  #logo {
+    height: 80px;
+  }
+  .toggles .modeswitch svg {
+    width: 28px;
+    height: 28px;
+  }
+  .toggles .openbtn svg {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  #logo {
+    height: 70px;
+  }
+  .toggles .modeswitch svg {
+    width: 26px;
+    height: 26px;
+  }
+  .toggles .openbtn svg {
+    width: 42px;
+    height: 42px;
+  }
+}
+
+@media (min-width: 576px) and (max-width: 767px) {
+  #logo {
+    height: 60px;
+  }
+  .toggles .modeswitch svg {
+    width: 24px;
+    height: 24px;
+  }
+  .toggles .openbtn svg {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 575px) {
+  #logo {
+    height: 50px;
+  }
+  .toggles .modeswitch svg {
+    width: 22px;
+    height: 22px;
+  }
+  .toggles .openbtn svg {
+    width: 38px;
+    height: 38px;
+  }
+}

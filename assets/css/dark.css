@@ -1,0 +1,54 @@
+body {
+  background-color: #111111;
+  color: white;
+}
+
+.step {
+  background: #333;
+  border: 2px solid #555;
+}
+
+button {
+  background: #111;
+  color: white;
+}
+
+.sidebar {
+  background-color: #1B1B1B;
+  border-left: 1px solid #424242;
+}
+
+.sidebar a {
+  color: #fff;
+ 
+}
+
+.sidebar a:hover {
+  color: #fff;
+  background-color: #363636;
+}
+
+/* burger */
+.openbtn:hover {
+  color: #eee;
+}
+
+.openbtn {
+  color: #f8f8f8;
+}
+
+/* sun toggle */
+.icon-light {
+  display: inline;
+}
+.icon-dark {
+  display: none;
+}
+
+header.container {
+  border-bottom: 1px solid #424242;
+}
+
+.btn {
+  border-color: white;
+}

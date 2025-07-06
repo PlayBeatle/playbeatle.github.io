@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Beatle - Rhythm Says</title>
+    <link rel="stylesheet" href="assets/css/base.css" />
+    <link rel="stylesheet" href="assets/css/header.css" />
+    <link rel="stylesheet" href="assets/css/drumgrid.css" />
+    <link id="themeStylesheet" rel="stylesheet" href="assets/css/dark.css" />
+    <link
+      id="favicon"
+      rel="icon"
+      type="image/png"
+      href="assets/images/icons/w-favicon.png"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="assets/js/utils.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        loadHTML("header", "partials/header.html", initHeaderBehavior);
+      });
+    </script>
+  </head>
+
+  <body>
+    <div id="header"></div>
+  </body>
+</html>
