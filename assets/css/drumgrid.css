@@ -9,6 +9,12 @@
   margin-bottom: 1rem;
 }
 
+.step:nth-child(5),
+.step:nth-child(9),
+.step:nth-child(13) {
+  margin-right: 5px;
+}
+
 .lane {
   display: contents;
 }
@@ -44,10 +50,9 @@
   font-weight: bold;
   cursor: pointer;
   font-size: 15px !important;
-  -webkit-user-select: none; 
-  -ms-user-select: none; 
+  -webkit-user-select: none;
+  -ms-user-select: none;
   user-select: none;
-
 }
 
 .grid-wrapper {
@@ -86,7 +91,7 @@
 
 @media (max-width: 575px) {
   .grid-wrapper {
-    transform: scale(0.52);
-    margin-bottom: -135px;
+    transform: scale(0.47);
+    margin-bottom: -175px;
   }
 }

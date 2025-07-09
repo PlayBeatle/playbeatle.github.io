@@ -14,13 +14,12 @@ button {
 }
 
 .sidebar {
-  background-color: #1B1B1B;
+  background-color: #1b1b1b;
   border-left: 1px solid #424242;
 }
 
 .sidebar a {
   color: #fff;
- 
 }
 
 .sidebar a:hover {
@@ -51,4 +50,24 @@ header.container {
 
 .btn {
   border-color: white;
+}
+
+.modal {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.modal-content {
+  background-color: #121213;
+  border: 1px solid #424242;
+}
+
+#patternInput {
+  background-color: #1e1e1e;
+  color: #fff;
+  border: 1px solid #424242;
+}
+
+.beatle-box {
+  background: #333;
+  border: 2px solid #555;
 }

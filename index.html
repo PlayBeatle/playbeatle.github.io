@@ -4,6 +4,7 @@
     <title>Beatle - Rhythm Says</title>
     <link rel="stylesheet" href="assets/css/base.css" />
     <link rel="stylesheet" href="assets/css/header.css" />
+    <link rel="stylesheet" href="assets/css/index.css" />
     <link rel="stylesheet" href="assets/css/drumgrid.css" />
     <link id="themeStylesheet" rel="stylesheet" href="assets/css/dark.css" />
     <link
@@ -17,11 +18,39 @@
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         loadHTML("header", "partials/header.html", initHeaderBehavior);
+        animateBeatleBoxes();
       });
     </script>
   </head>
 
   <body>
-    <div id="header"></div>
+    <header id="header"></header>
+
+    <section class="container">
+      <div class="centered">
+        <div class="h-center v-center column">
+          <div class="beatle-lingo">
+            <div class="beatle-box">
+              <img
+                id="beatle-logo"
+                class="beatle-logo"
+                src="assets/images/logos/beatle-b-logo.svg"
+              />
+            </div>
+            <div class="beatle-box">B</div>
+            <div class="beatle-box">E</div>
+            <div class="beatle-box">A</div>
+            <div class="beatle-box">T</div>
+            <div class="beatle-box">L</div>
+            <div class="beatle-box">E</div>
+          </div>
+
+          <a href="beat-of-the-day.html" class="btn">Beat of the Day</a>
+          <a href="beat-boss.html" class="btn">Beat Boss</a>
+          <a href="challenges.html" class="btn">Challenges</a>
+          <a href="playground.html" class="btn">Playground</a>
+        </div>
+      </div>
+    </section>
   </body>
 </html>

@@ -5,6 +5,8 @@
     <link rel="stylesheet" href="assets/css/base.css" />
     <link rel="stylesheet" href="assets/css/header.css" />
     <link rel="stylesheet" href="assets/css/drumgrid.css" />
+    <link rel="stylesheet" href="assets/css/buttongrid.css" />
+    <link rel="stylesheet" href="assets/css/modal.css" />
     <link id="themeStylesheet" rel="stylesheet" href="assets/css/dark.css" />
     <link
       id="favicon"
@@ -16,42 +18,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="assets/js/utils.js"></script>
     <script src="assets/js/app.js"></script>
+    <script src="assets/js/modal.js"></script>
+
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         loadHTML("header", "partials/header.html", initHeaderBehavior);
-        initDrumGrid();
+
+        loadHTML("modalContainer", "partials/modal.html", () => {
+          loadHTML("controls", "partials/grid-controls.html", () => {
+            const wanted = ["play", "load", "save", "clear"];
+            document.querySelectorAll("[data-show]").forEach((ctrl) => {
+              if (!wanted.includes(ctrl.dataset.show)) {
+                ctrl.remove();
+              }
+            });
+
+            initDrumGrid();
+            initModalBehavior();
+          });
+        });
       });
     </script>
   </head>
 
   <body>
-    <div id="header"></div>
+    <header id="header"></header>
 
     <section class="container">
+      <div id="controls"></div>
+
       <div class="grid-wrapper">
         <div class="grid" id="drumGrid"></div>
       </div>
-
-      <button id="playBtn" class="btn">Play Pattern</button>
-
-      <textarea
-        id="patternInput"
-        rows="8"
-        cols="16"
-        placeholder="x--------------x
---x-xxx---x-----
-----------------
-------------x---
--------------x--
-----x--x--x----x
---------------x-
-x--------------x"
-      ></textarea>
-
-      <button id="loadBtn" class="btn">Load Pattern</button>
-      <button id="saveBtn" class="btn">Save Pattern</button>
-      <button id="clearBtn" class="btn">Clear Pattern</button>
-      <pre id="savedPatternOutput"></pre>
     </section>
+
+    <div id="modalContainer"></div>
   </body>
 </html>

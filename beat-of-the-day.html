@@ -23,6 +23,34 @@
   </head>
 
   <body>
-    <div id="header"></div>
+    <header id="header"></header>
+
+    <script>
+      function getDailyNumberCode() {
+        const today = new Date();
+
+        const seed =
+          today.getFullYear() * 10000 +
+          (today.getMonth() + 1) * 100 +
+          today.getDate();
+    
+        function seededRandom(s) {
+          const x = Math.sin(s) * 10000;
+          return x - Math.floor(x);
+        }
+    
+        let code = '';
+        for (let i = 0; i < 4; i++) {
+          const rand = seededRandom(seed + i); 
+          const digit = Math.floor(rand * 9) + 1; 
+          code += digit + ' ';
+        }
+    
+        return code;
+      }
+    
+      console.log(getDailyNumberCode()); 
+    </script>
+    
   </body>
 </html>

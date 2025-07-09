@@ -20,7 +20,7 @@ const buffers = new Array(LANES).fill(null);
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-let drumGrid, patternInput, savedPatternOutput;
+let drumGrid, patternInput;
 
 // Pattern handling
 function loadPatternFromText(input) {
@@ -35,6 +35,12 @@ function loadPatternFromText(input) {
     }
     pattern[lane] = parseRhythmRow(line, STEPS_PER_LANE);
   });
+}
+
+// Pattern storage
+function savePatternToLocalStorage() {
+  const textPattern = patternToText();
+  localStorage.setItem("playgroundPattern", textPattern);
 }
 
 // Audio handling
@@ -59,7 +65,7 @@ async function playPattern() {
   const startTime = audioCtx.currentTime;
 
   for (let step = 0; step < STEPS_PER_LANE; step++) {
-    const hitTime = startTime + step * 0.1;
+    const hitTime = startTime + step * 0.11;
 
     for (let lane = 0; lane < LANES; lane++) {
       if (pattern[lane][step]) {
@@ -102,6 +108,7 @@ function createGrid() {
       }
 
       updateGridUI();
+      savePatternToLocalStorage();
     });
 
     // Steps
@@ -112,6 +119,7 @@ function createGrid() {
       stepDiv.addEventListener("click", () => {
         pattern[lane][step] = !pattern[lane][step];
         stepDiv.classList.toggle("active");
+        savePatternToLocalStorage();
       });
 
       row.appendChild(stepDiv);
@@ -136,14 +144,23 @@ function updateGridUI() {
 function initDrumGrid() {
   drumGrid = document.getElementById("drumGrid");
   patternInput = document.getElementById("patternInput");
-  savedPatternOutput = document.getElementById("savedPatternOutput");
 
-  if (!drumGrid || !patternInput || !savedPatternOutput) {
+  if (!drumGrid || !patternInput) {
     console.error("Missing essential DOM elements");
     return;
   }
 
   createGrid();
+
+  const playgroundPattern = localStorage.getItem("playgroundPattern");
+  if (playgroundPattern) {
+    try {
+      loadPatternFromText(playgroundPattern);
+    } catch (e) {
+      console.warn("Invalid saved pattern:", e.message);
+    }
+  }
+
   updateGridUI();
 
   document.getElementById("playBtn").addEventListener("click", async () => {
@@ -159,14 +176,24 @@ function initDrumGrid() {
     try {
       loadPatternFromText(patternInput.value);
       updateGridUI();
+      patternInput.value = "";
+
+      document.getElementById("patternLoaderModal").style.display = "none";
+
+      savePatternToLocalStorage();
     } catch (e) {
-      alert(e.message);
-      // TODO: indicate error visually in the UI
+      console.warn(e.message);
+      patternInput.classList.add("error");
     }
   });
 
+  patternInput.addEventListener("input", () => {
+    patternInput.classList.remove("error");
+  });
+
   document.getElementById("saveBtn").addEventListener("click", () => {
-    savedPatternOutput.textContent = patternToText();
+    const copyText = patternToText();
+    navigator.clipboard.writeText(copyText);
   });
 
   document.getElementById("clearBtn").addEventListener("click", () => {
@@ -176,5 +203,7 @@ function initDrumGrid() {
       }
     }
     updateGridUI();
+
+    savePatternToLocalStorage();
   });
 }

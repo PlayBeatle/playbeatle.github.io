@@ -1,0 +1,61 @@
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  padding-top: 100px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+
+.modal-content {
+  position: relative;
+  margin: auto;
+  padding: 20px;
+  border-radius: 15px;
+  width: 25%;
+  min-width: 250px;
+}
+
+.close {
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.closemodal {
+  margin-bottom: 45px;
+}
+
+.closemodal svg {
+  cursor: pointer;
+  position: absolute;
+  right: 20px;
+}
+
+.modal-footer .btn {
+  min-width: 8ch;
+}
+
+.modal-footer {
+  padding-top: 20px;
+}
+
+#patternInput {
+  border-radius: 8px;
+  padding: 8px;
+  font-family: monospace;
+  resize: none;
+}
+
+#patternInput.error {
+  border: 2px solid #e53935;
+}
