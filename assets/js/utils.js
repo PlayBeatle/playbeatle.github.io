@@ -12,12 +12,22 @@ function initHeaderBehavior() {
   const sidebar = document.getElementById("sidebar");
   const openBtn = document.querySelector(".openbtn");
   const closeBtn = document.getElementById("closeSidebar");
+  const volumeBtn = document.getElementById("volumeCycleButton");
 
   const toggleSidebar = () => sidebar.classList.toggle("active");
   const closeSidebar = () => sidebar.classList.remove("active");
 
   closeBtn.addEventListener("click", toggleSidebar);
   openBtn.addEventListener("click", toggleSidebar);
+
+  volumeBtn.addEventListener("click", () => {
+    const volIndex = window.audioAPI.cycleVolumeLevel() ?? 2;
+    setVolumeSVG(volIndex, volumeBtn);
+  });
+
+  const savedVolume = Number(localStorage.getItem("volume"));
+  const volIndexOnLoad = isNaN(savedVolume) ? 2 : savedVolume;
+  setVolumeSVG(volIndexOnLoad, volumeBtn);
 
   document.addEventListener("click", (event) => {
     if (
@@ -63,17 +73,60 @@ function initHeaderBehavior() {
     applyTheme(newTheme);
   });
 }
-  
-function parseRhythmRow(str, stepsPerLane) {
-  return Array.from(str)
-    .map((char) => char === "x")
-    .slice(0, stepsPerLane);
-}
 
-function patternToText() {
-  return pattern
-    .map((row) => row.map((cell) => (cell ? "x" : "-")).join(""))
-    .join("\n");
+function setVolumeSVG(index, volumeBtn) {
+  switch (index) {
+    case 0:
+      volumeBtn.innerHTML = `  
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M6 15h-2a1 1 0 0 1 -1 -1v-4a1 1 0 0 1 1 -1h2l3.5 -4.5a.8 .8 0 0 1 1.5 .5v14a.8 .8 0 0 1 -1.5 .5l-3.5 -4.5" />
+</svg>
+`;
+      break;
+    case 1:
+      volumeBtn.innerHTML = `
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 8a5 5 0 0 1 0 8" />
+  <path d="M6 15h-2a1 1 0 0 1 -1 -1v-4a1 1 0 0 1 1 -1h2l3.5 -4.5a.8 .8 0 0 1 1.5 .5v14a.8 .8 0 0 1 -1.5 .5l-3.5 -4.5" />
+</svg>
+`;
+      break;
+    case 2:
+    default:
+      volumeBtn.innerHTML = `
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 8a5 5 0 0 1 0 8" />
+  <path d="M17.7 5a9 9 0 0 1 0 14" />
+  <path d="M6 15h-2a1 1 0 0 1 -1 -1v-4a1 1 0 0 1 1 -1h2l3.5 -4.5a.8 .8 0 0 1 1.5 .5v14a.8 .8 0 0 1 -1.5 .5l-3.5 -4.5" />
+</svg>
+`;
+      break;
+  }
 }
 
 function animateBeatleBoxes() {
@@ -117,4 +170,86 @@ function animateBeatleBoxes() {
   };
 
   runAnimation();
+}
+
+function getStorageKey(suffix = "Pattern", fallback = "playground") {
+  const fileBaseName =
+    window.location.pathname.split("/").pop().replace(".html", "") || fallback;
+  return `${fileBaseName}${suffix}`;
+}
+
+function getDailyNumberCode() {
+  const today = new Date();
+
+  const seed =
+    today.getFullYear() * 10000 +
+    (today.getMonth() + 1) * 100 +
+    today.getDate();
+
+  function seededRandom(s) {
+    const x = Math.sin(s) * 10000;
+    return x - Math.floor(x);
+  }
+
+  const NUM_BEATS = 9;
+
+  let code = "";
+  for (let i = 0; i < 4; i++) {
+    const rand = seededRandom(seed + i);
+    const digit = Math.floor(rand * NUM_BEATS) + 1;
+    code += digit + " ";
+  }
+
+  console.log(code);
+  return "1 1 1 1";
+  return code;
+}
+
+let cachedDailyPattern = null;
+
+async function getDailyPattern() {
+  if (cachedDailyPattern) {
+    console.log(cachedDailyPattern);
+    return cachedDailyPattern;
+  }
+
+  const partIds = getDailyNumberCode().trim().split(" ").map(Number);
+  const partFiles = partIds.map((id) => `assets/rhythms/beats/${id}.txt`);
+
+  const parts = await Promise.all(
+    partFiles.map((path) => fetch(path).then((res) => res.text()))
+  );
+
+  const combined = Array.from({ length: 8 }, () => "");
+
+  for (const text of parts) {
+    const lines = text.trim().split("\n");
+
+    if (lines.length !== 8) {
+      throw new Error(`Expected 8 lines, got ${lines.length}`);
+    }
+
+    lines.forEach((raw, i) => {
+      const line = raw.trim();
+      if (line.length !== 4) {
+        throw new Error(`Line ${i + 1} in part is not 4 characters: "${line}"`);
+      }
+      combined[i] += line;
+    });
+  }
+
+  combined.forEach((line, i) => {
+    if (line.length !== 16) {
+      throw new Error(`Lane ${i + 1} does not have 16 steps`);
+    }
+  });
+
+  const pattern = combined.join("\n");
+  cachedDailyPattern = pattern;
+  return pattern;
+}
+
+function getTodayDateString() {
+  const today = new Date();
+  return today.toISOString().split("T")[0];
 }

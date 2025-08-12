@@ -23,13 +23,24 @@
   width: 40px;
   height: 40px;
   border-radius: 4px;
-  cursor: pointer;
   transition: background 0.2s;
   margin: 1px;
 }
 
+.grid > .lane-row > .step,
+.grid > .lane-row > .lane-label {
+  cursor: pointer;
+}
 .step.active {
   background: #426e86;
+}
+
+.step.correct {
+  background: #72e582;
+}
+
+.step.incorrect {
+  background: #e57272;
 }
 
 #drumGrid {
@@ -48,7 +59,6 @@
   margin-right: 8px;
   text-align: right;
   font-weight: bold;
-  cursor: pointer;
   font-size: 15px !important;
   -webkit-user-select: none;
   -ms-user-select: none;
@@ -60,6 +70,16 @@
   justify-content: center;
   align-items: center;
   transform-origin: center top;
+}
+
+.step-group {
+  display: flex;
+  align-items: center;
+  border-radius: 15px;
+  padding: 5px 10px;
+  gap: 12px;
+  width: max-content;
+  margin-bottom: 1rem;
 }
 
 @media (min-width: 1200px) {

@@ -1,5 +1,28 @@
 <div class="button-grid">
-  <div class="button-item">
+  <div class="button-item" data-show="listen">
+    <button id="listenBtn" class="btn svg-icon">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path
+          d="M4 13m0 2a2 2 0 0 1 2 -2h1a2 2 0 0 1 2 2v3a2 2 0 0 1 -2 2h-1a2 2 0 0 1 -2 -2z"
+        />
+        <path
+          d="M15 13m0 2a2 2 0 0 1 2 -2h1a2 2 0 0 1 2 2v3a2 2 0 0 1 -2 2h-1a2 2 0 0 1 -2 -2z"
+        />
+        <path d="M4 15v-3a8 8 0 0 1 16 0v3" />
+      </svg>
+    </button>
+    <div class="button-text">Listen</div>
+  </div>
+
+  <div class="button-item" data-show="play">
     <button id="playBtn" class="btn svg-icon">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -52,6 +75,23 @@
       </svg>
     </button>
     <div class="button-text">Save</div>
+  </div>
+
+  <div class="button-item" data-show="submit">
+    <button id="submitBtn" class="btn svg-icon">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M5 12l5 5l10 -10" />
+      </svg>
+    </button>
+    <div class="button-text">Submit</div>
   </div>
 
   <div class="button-item" data-show="clear">

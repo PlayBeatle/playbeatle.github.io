@@ -5,6 +5,10 @@
     <link rel="stylesheet" href="assets/css/base.css" />
     <link rel="stylesheet" href="assets/css/header.css" />
     <link rel="stylesheet" href="assets/css/drumgrid.css" />
+    <link rel="stylesheet" href="assets/css/buttongrid.css" />
+    <link rel="stylesheet" href="assets/css/modal.css" />
+    <link rel="stylesheet" href="assets/css/accordion.css" />
+
     <link id="themeStylesheet" rel="stylesheet" href="assets/css/dark.css" />
     <link
       id="favicon"
@@ -12,12 +16,26 @@
       type="image/png"
       href="assets/images/icons/w-favicon.png"
     />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="assets/js/utils.js"></script>
+    <script type="module" src="assets/js/app.js"></script>
+
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         loadHTML("header", "partials/header.html", initHeaderBehavior);
+
+        loadHTML("controls", "partials/grid-controls.html", () => {
+          const wanted = ["listen", "submit", "clear"];
+          document.querySelectorAll("[data-show]").forEach((ctrl) => {
+            if (!wanted.includes(ctrl.dataset.show)) {
+              ctrl.remove();
+            }
+          });
+
+          initDrumGrid(getStorageKey());
+          renderTodaySubmissions(getStorageKey());
+        });
       });
     </script>
   </head>
@@ -25,32 +43,37 @@
   <body>
     <header id="header"></header>
 
-    <script>
-      function getDailyNumberCode() {
-        const today = new Date();
+    <section class="container">
+      <div id="controls"></div>
 
-        const seed =
-          today.getFullYear() * 10000 +
-          (today.getMonth() + 1) * 100 +
-          today.getDate();
-    
-        function seededRandom(s) {
-          const x = Math.sin(s) * 10000;
-          return x - Math.floor(x);
-        }
-    
-        let code = '';
-        for (let i = 0; i < 4; i++) {
-          const rand = seededRandom(seed + i); 
-          const digit = Math.floor(rand * 9) + 1; 
-          code += digit + ' ';
-        }
-    
-        return code;
-      }
-    
-      console.log(getDailyNumberCode()); 
-    </script>
-    
+      <div class="grid-wrapper">
+        <div class="grid" id="drumGrid"></div>
+      </div>
+    </section>
+
+    <section class="container">
+      <div class="step-group svg-icon">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <g transform="translate(24,0) scale(-1,1)">
+            <path
+              d="M8 10a2 2 0 0 1 2 -2h9a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-9a2 2 0 0 1 -2 -2z"
+            />
+            <path
+              d="M16 8v-3a2 2 0 0 0 -2 -2h-9a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h3"
+            />
+          </g>
+        </svg>
+        <div id="step-counter"></div>
+      </div>
+      <div id="replayDrumGrid"></div>
+    </section>
   </body>
 </html>

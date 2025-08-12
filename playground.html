@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Beatle - Rhythm Says</title>
+    <title>Beatle - Playground</title>
     <link rel="stylesheet" href="assets/css/base.css" />
     <link rel="stylesheet" href="assets/css/header.css" />
     <link rel="stylesheet" href="assets/css/drumgrid.css" />
@@ -17,7 +17,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="assets/js/utils.js"></script>
-    <script src="assets/js/app.js"></script>
+    <script type="module" src="assets/js/app.js"></script>
     <script src="assets/js/modal.js"></script>
 
     <script>
@@ -33,7 +33,7 @@
               }
             });
 
-            initDrumGrid();
+            initDrumGrid(getStorageKey());
             initModalBehavior();
           });
         });

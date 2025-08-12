@@ -1,0 +1,55 @@
+.accordion {
+  cursor: pointer;
+  transition: 0.4s;
+  border-radius: 15px;
+  padding: 5px;
+}
+
+.panel {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  padding-top: 1rem;
+}
+
+.replay-attempt > .panel > .grid-wrapper > .grid {
+  display: block !important;
+}
+
+.replay-attempt {
+  margin-bottom: 0.5rem;
+}
+
+.accordion-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.icon-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.icon-toggle {
+  display: flex;
+  align-items: center;
+}
+
+.icon-toggle .plus,
+.icon-toggle .minus {
+  display: none;
+}
+
+.accordion .icon-toggle .plus {
+  display: inline;
+}
+
+.accordion.active-accordion .icon-toggle .plus {
+  display: none;
+}
+
+.accordion.active-accordion .icon-toggle .minus {
+  display: inline;
+}

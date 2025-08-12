@@ -75,3 +75,17 @@ header.container {
   background: #ebebeb;
   border: 2px solid #999;
 }
+
+.accordion {
+  background-color: #ebebeb;
+  border: 2px solid #999;
+}
+
+.active-accordion,
+.accordion:hover {
+  background-color: #dfdfdf;
+}
+
+.step-group {
+  border: 1px solid black;
+}
