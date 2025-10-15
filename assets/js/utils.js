@@ -49,8 +49,8 @@ function initHeaderBehavior() {
     setVolumeSVG(volIndex, volumeBtn);
   });
 
-  const savedVolume = Number(localStorage.getItem("volume"));
-  const volIndexOnLoad = isNaN(savedVolume) ? 2 : savedVolume;
+  const savedVolumeStr = localStorage.getItem("volume");
+  const volIndexOnLoad = savedVolumeStr === null ? 2 : Number(savedVolumeStr);
   setVolumeSVG(volIndexOnLoad, volumeBtn);
 
   document.addEventListener("click", (event) => {
