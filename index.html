@@ -32,7 +32,11 @@
       }
       gtag("js", new Date());
 
-      gtag("config", "G-XDVCT7RMF8");
+      gtag("config", "G-XDVCT7RMF8", {
+        cookie_domain: 'auto',
+        cookie_expires: 63072000,
+        cookie_flags: 'SameSite=None;Secure'
+      });
     </script>
   </head>
 
