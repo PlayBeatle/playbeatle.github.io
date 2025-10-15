@@ -7,6 +7,30 @@ function loadHTML(id, file, callback) {
     });
 }
 
+function applyTheme(theme) {
+  // Theme
+  const themeStylesheet = document.getElementById("themeStylesheet");
+  const logo = document.getElementById("logo");
+
+  themeStylesheet.href = `assets/css/${theme}.css`;
+  if (logo) {
+    logo.src = `assets/images/logos/${
+      theme === "dark" ? "b-logo.svg" : "w-logo.svg"
+    }`;
+  }
+
+  const beatleLogo = document.getElementById("beatle-logo");
+  if (beatleLogo) {
+    beatleLogo.src = `assets/images/logos/beatle-${
+      theme === "dark" ? "b" : "w"
+    }-logo.svg`;
+  }
+
+  localStorage.setItem("theme", theme);
+}
+
+window.applyTheme = applyTheme;
+
 function initHeaderBehavior() {
   // Sidebar
   const sidebar = document.getElementById("sidebar");
@@ -39,35 +63,12 @@ function initHeaderBehavior() {
     }
   });
 
-  // Theme
-  const themeStylesheet = document.getElementById("themeStylesheet");
-  const logo = document.getElementById("logo");
-
-  const applyTheme = (theme) => {
-    themeStylesheet.href = `assets/css/${theme}.css`;
-    if (logo) {
-      logo.src = `assets/images/logos/${
-        theme === "dark" ? "b-logo.svg" : "w-logo.svg"
-      }`;
-    }
-
-    const beatleLogo = document.getElementById("beatle-logo");
-    if (beatleLogo) {
-      beatleLogo.src = `assets/images/logos/beatle-${
-        theme === "dark" ? "b" : "w"
-      }-logo.svg`;
-    }
-
-    localStorage.setItem("theme", theme);
-  };
-
   const getCurrentTheme = () => localStorage.getItem("theme") || "dark";
-
-  // Initialize theme on load
   applyTheme(getCurrentTheme());
 
   // Toggle theme
   document.getElementById("themeToggle").addEventListener("click", () => {
+    const themeStylesheet = document.getElementById("themeStylesheet");
     const currentHref = themeStylesheet.href;
     const newTheme = currentHref.includes("dark") ? "light" : "dark";
     applyTheme(newTheme);
@@ -178,42 +179,17 @@ function getStorageKey(suffix = "Pattern", fallback = "playground") {
   return `${fileBaseName}${suffix}`;
 }
 
-function getDailyNumberCode() {
-  const today = new Date();
-
-  const seed =
-    today.getFullYear() * 10000 +
-    (today.getMonth() + 1) * 100 +
-    today.getDate();
-
-  function seededRandom(s) {
-    const x = Math.sin(s) * 10000;
-    return x - Math.floor(x);
-  }
-
-  const NUM_BEATS = 9;
-
-  let code = "";
-  for (let i = 0; i < 4; i++) {
-    const rand = seededRandom(seed + i);
-    const digit = Math.floor(rand * NUM_BEATS) + 1;
-    code += digit + " ";
-  }
-
-  console.log(code);
-  return "1 1 1 1";
-  return code;
-}
-
-let cachedDailyPattern = null;
+const cachedPatternsByDate = {};
 
 async function getDailyPattern() {
-  if (cachedDailyPattern) {
-    console.log(cachedDailyPattern);
-    return cachedDailyPattern;
+  const todayUTC = new Date();
+  const utcDateStr = todayUTC.toISOString().slice(0, 10);
+
+  if (cachedPatternsByDate[utcDateStr]) {
+    return cachedPatternsByDate[utcDateStr];
   }
 
-  const partIds = getDailyNumberCode().trim().split(" ").map(Number);
+  const partIds = getDailyNumberCode(utcDateStr).trim().split(" ").map(Number);
   const partFiles = partIds.map((id) => `assets/rhythms/beats/${id}.txt`);
 
   const parts = await Promise.all(
@@ -245,11 +221,92 @@ async function getDailyPattern() {
   });
 
   const pattern = combined.join("\n");
-  cachedDailyPattern = pattern;
+  cachedPatternsByDate[utcDateStr] = pattern;
   return pattern;
+}
+
+function getDailyNumberCode(dateStr) {
+  const [year, month, day] = dateStr.split("-").map(Number);
+
+  const seed = year * 10000 + month * 100 + day;
+
+  function seededRandom(s) {
+    const x = Math.sin(s) * 10000;
+    return x - Math.floor(x);
+  }
+
+  const NUM_BEATS = 9;
+
+  let code = "";
+  for (let i = 0; i < 4; i++) {
+    const rand = seededRandom(seed + i);
+    const digit = Math.floor(rand * NUM_BEATS) + 1;
+    code += digit + " ";
+  }
+
+  return code.trim();
 }
 
 function getTodayDateString() {
   const today = new Date();
   return today.toISOString().split("T")[0];
+}
+
+function showToast(message, duration = 4000) {
+  const container = document.getElementById("toast-container");
+  const toast = document.createElement("div");
+  toast.classList.add("toast");
+  toast.style.display = "flex";
+  toast.style.alignItems = "center";
+  toast.style.justifyContent = "space-between";
+  toast.style.gap = "10px";
+  toast.style.cursor = "pointer";
+
+  const text = document.createElement("span");
+  text.textContent = message;
+  text.style.flex = "1";
+
+  const closeBtn = document.createElement("span");
+  closeBtn.innerHTML = `
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="20"
+  height="20"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="9" />
+  <line x1="10" y1="10" x2="14" y2="14" />
+  <line x1="14" y1="10" x2="10" y2="14" />
+</svg>
+`;
+  closeBtn.style.display = "flex";
+  closeBtn.style.alignItems = "center";
+
+  const removeToast = () => {
+    toast.classList.remove("show");
+    toast.addEventListener("transitionend", () => toast.remove());
+  };
+
+  toast.addEventListener("click", removeToast);
+  closeBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    removeToast();
+  });
+
+  toast.appendChild(text);
+  toast.appendChild(closeBtn);
+  container.appendChild(toast);
+
+  requestAnimationFrame(() => {
+    toast.classList.add("show");
+  });
+
+  setTimeout(() => {
+    if (toast.parentNode) removeToast();
+  }, duration);
 }

@@ -31,6 +31,20 @@
 .grid > .lane-row > .lane-label {
   cursor: pointer;
 }
+
+.grid.no-interaction > .lane-row > .step,
+.grid.no-interaction > .lane-row > .lane-label {
+  cursor: default;
+}
+
+.replay-grid .step {
+  cursor: default !important;
+}
+
+.replay-grid .lane-label {
+  cursor: default !important;
+}
+
 .step.active {
   background: #426e86;
 }

@@ -59,8 +59,45 @@ function updateStepCounter() {
   }
 }
 
+function canAttempt() {
+  const onPlayground = window.location.pathname.endsWith("playground.html");
+  if (onPlayground) {
+    return { allowed: true };
+  }
+
+  const dateKey = getTodayDateString();
+  const dataKey = `${dateKey}_botd_data`;
+  const data = JSON.parse(localStorage.getItem(dataKey) || "[]");
+
+  if (
+    data.some(
+      (attempt) =>
+        attempt.correctCount === attempt.totalChecked &&
+        attempt.totalChecked > 0
+    )
+  ) {
+    showFinishedModal();
+    window.applyTheme(localStorage.getItem("theme") || "dark");
+    return { allowed: false, message: "You've already won today!" };
+  }
+
+  if (data.length >= 6) {
+    showFinishedModal();
+    window.applyTheme(localStorage.getItem("theme") || "dark");
+    return {
+      allowed: false,
+      message: "You've used all your attempts today!",
+    };
+  }
+
+  return { allowed: true };
+}
+
+window.canAttempt = canAttempt;
+
 function createGrid(storageKey) {
   const labelStates = new Array(LANES).fill(0);
+  const onPlayground = window.location.pathname.endsWith("playground.html");
 
   for (let lane = 0; lane < LANES; lane++) {
     const row = document.createElement("div");
@@ -72,6 +109,9 @@ function createGrid(storageKey) {
     row.appendChild(label);
 
     label.addEventListener("click", () => {
+      const attemptStatus = canAttempt();
+      if (!onPlayground && !attemptStatus.allowed) return;
+
       let activeCount = 0;
       for (let step = 0; step < STEPS_PER_LANE; step++) {
         if (pattern[lane][step]) activeCount++;
@@ -89,12 +129,17 @@ function createGrid(storageKey) {
     for (let step = 0; step < STEPS_PER_LANE; step++) {
       const stepDiv = document.createElement("div");
       stepDiv.classList.add("step");
+
       stepDiv.addEventListener("click", () => {
+        const attemptStatus = canAttempt();
+        if (!onPlayground && !attemptStatus.allowed) return;
+
         pattern[lane][step] = !pattern[lane][step];
         stepDiv.classList.toggle("active");
         savePatternToLocalStorage(storageKey);
         updateStepCounter();
       });
+
       row.appendChild(stepDiv);
     }
 
@@ -104,12 +149,30 @@ function createGrid(storageKey) {
 
 function updateGridUI() {
   const rows = drumGrid.querySelectorAll(".lane-row");
+  const onPlayground = window.location.pathname.endsWith("playground.html");
+  const attemptStatus = onPlayground ? { allowed: true } : canAttempt();
+
+  if (attemptStatus.allowed) {
+    drumGrid.classList.remove("no-interaction");
+  } else {
+    drumGrid.classList.add("no-interaction");
+  }
+
   rows.forEach((row, lane) => {
     const steps = row.querySelectorAll(".step");
     for (let step = 0; step < STEPS_PER_LANE; step++) {
-      steps[step].classList.toggle("active", pattern[lane][step]);
+      steps[step].classList.remove("active", "correct");
+
+      if (pattern[lane][step]) {
+        if (attemptStatus.allowed) {
+          steps[step].classList.add("active");
+        } else {
+          steps[step].classList.add("correct");
+        }
+      }
     }
   });
+
   updateStepCounter();
 }
 
@@ -189,10 +252,17 @@ function initDrumGrid(storageKey) {
     saveBtn.addEventListener("click", () => {
       const copyText = patternToText(pattern);
       navigator.clipboard.writeText(copyText);
+      showToast("Pattern copied to clipboard.");
     });
   }
 
   document.getElementById("clearBtn").addEventListener("click", () => {
+    const onPlayground = window.location.pathname.endsWith("playground.html");
+    if (!onPlayground) {
+      const attemptStatus = canAttempt();
+      if (!attemptStatus.allowed) return;
+    }
+
     for (let lane = 0; lane < LANES; lane++) {
       for (let step = 0; step < STEPS_PER_LANE; step++) {
         pattern[lane][step] = false;
@@ -205,26 +275,29 @@ function initDrumGrid(storageKey) {
   const submitBtn = document.getElementById("submitBtn");
   if (submitBtn) {
     submitBtn.addEventListener("click", async () => {
-      if (!canAttempt()) {
-        alert("You've used all your attempts today!");
+      const attemptStatus = canAttempt();
+      if (!attemptStatus.allowed) {
+        showToast(attemptStatus.message);
         return;
       }
+
       const userPattern = patternToText(pattern);
       const activeCount = userPattern.split("").filter((c) => c === "x").length;
+
+      if (activeCount < maxActiveSteps) {
+        showToast(
+          `Not enough active steps. You’ve filled ${activeCount} out of ${maxActiveSteps}.`
+        );
+        return;
+      }
+
       if (activeCount > maxActiveSteps) {
-        alert(`Too many active steps. Max allowed: ${maxActiveSteps}`);
+        showToast(`Too many active steps. Max allowed: ${maxActiveSteps}`);
         return;
       }
       const correctPattern = await getDailyPattern();
       saveAttempt(userPattern, correctPattern);
     });
-  }
-
-  function canAttempt() {
-    const dateKey = getTodayDateString();
-    const dataKey = `${dateKey}_botd_data`;
-    const data = JSON.parse(localStorage.getItem(dataKey) || "[]");
-    return data.length < 6;
   }
 
   function comparePatterns(user, correct) {
@@ -278,6 +351,17 @@ function initDrumGrid(storageKey) {
 
     localStorage.setItem(dataKey, JSON.stringify(data));
     renderTodaySubmissions(storageKey);
+
+    const attemptStatus = canAttempt();
+    if (!attemptStatus.allowed) {
+      try {
+        loadPatternFromText(correctPattern);
+        updateGridUI();
+        savePatternToLocalStorage(storageKey);
+      } catch (e) {
+        console.warn(e.message);
+      }
+    }
   }
 
   const listenBtn = document.getElementById("listenBtn");
@@ -393,7 +477,7 @@ function renderTodaySubmissions(storageKey) {
     gridWrapper.classList.add("grid-wrapper");
 
     const grid = document.createElement("div");
-    grid.classList.add("grid");
+    grid.classList.add("grid", "replay-grid");
 
     for (let lane = 0; lane < LANES; lane++) {
       const row = document.createElement("div");
@@ -465,9 +549,11 @@ function renderTodaySubmissions(storageKey) {
     const firstPanel = acc[0].nextElementSibling;
     firstPanel.style.maxHeight = firstPanel.scrollHeight + "px";
 
-    const container = acc[0].closest(".replay-attempt");
-    const y = container.getBoundingClientRect().top + window.scrollY - 100;
-    window.scrollTo({ top: y, behavior: "smooth" });
+    if (canAttempt().allowed) {
+      const container = acc[0].closest(".replay-attempt");
+      const y = container.getBoundingClientRect().top + window.scrollY - 100;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }
   }
 }
 
@@ -550,12 +636,17 @@ function replayLoadButton(storageKey, textPattern) {
   buttonItem.appendChild(buttonText);
 
   loadButton.addEventListener("click", async () => {
-    try {
-      loadPatternFromText(textPattern);
-      updateGridUI();
-      savePatternToLocalStorage(storageKey);
-    } catch (e) {
-      console.warn(e.message);
+    const onPlayground = window.location.pathname.endsWith("playground.html");
+    const attemptStatus = canAttempt();
+
+    if (onPlayground || attemptStatus.allowed) {
+      try {
+        loadPatternFromText(textPattern);
+        updateGridUI();
+        savePatternToLocalStorage(storageKey);
+      } catch (e) {
+        console.warn(e.message);
+      }
     }
   });
 

@@ -85,3 +85,9 @@ header.container {
 .step-group {
   border: 1px solid white;
 }
+
+.toast {
+  background-color: black;
+  color: white;
+  border: 1px solid white;
+}

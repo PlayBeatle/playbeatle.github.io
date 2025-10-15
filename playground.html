@@ -24,7 +24,7 @@
       document.addEventListener("DOMContentLoaded", () => {
         loadHTML("header", "partials/header.html", initHeaderBehavior);
 
-        loadHTML("modalContainer", "partials/modal.html", () => {
+        loadHTML("modalContainer", "partials/pattern-loader-modal.html", () => {
           loadHTML("controls", "partials/grid-controls.html", () => {
             const wanted = ["play", "load", "save", "clear"];
             document.querySelectorAll("[data-show]").forEach((ctrl) => {
@@ -34,7 +34,7 @@
             });
 
             initDrumGrid(getStorageKey());
-            initModalBehavior();
+            initModalBehavior("patternLoaderModal", "openModal");
           });
         });
       });
@@ -53,5 +53,7 @@
     </section>
 
     <div id="modalContainer"></div>
+  
+    <div id="toast-container"></div>
   </body>
 </html>

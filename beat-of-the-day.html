@@ -18,8 +18,10 @@
     />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="assets/js/finishedModal.js"></script>
     <script src="assets/js/utils.js"></script>
     <script type="module" src="assets/js/app.js"></script>
+    <script src="assets/js/modal.js"></script>
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
@@ -36,6 +38,17 @@
           initDrumGrid(getStorageKey());
           renderTodaySubmissions(getStorageKey());
         });
+
+        const hasPlayed =
+          localStorage.getItem("beat-of-the-dayPattern") !== null;
+
+        if (!hasPlayed) {
+          loadHTML("modalContainer", "partials/how-to-play-modal.html", () => {
+            initModalBehavior("howToPlayModal");
+          });
+        }
+
+        canAttempt();
       });
     </script>
   </head>
@@ -75,5 +88,9 @@
       </div>
       <div id="replayDrumGrid"></div>
     </section>
+
+    <div id="modalContainer"></div>
+
+    <div id="toast-container"></div>
   </body>
 </html>

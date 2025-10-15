@@ -73,6 +73,9 @@ header.container {
   #logo {
     height: 90px;
   }
+  #toast-container {
+      top: 100px;
+  }
   .toggles .modeswitch svg {
     width: 30px;
     height: 30px;
@@ -88,6 +91,9 @@ header.container {
   #logo {
     height: 80px;
   }
+  #toast-container {
+      top: 100px;
+  }
   .toggles .modeswitch svg {
     width: 28px;
     height: 28px;
@@ -101,6 +107,9 @@ header.container {
 @media (min-width: 768px) and (max-width: 991px) {
   #logo {
     height: 70px;
+  }
+  #toast-container {
+      top: 80px;
   }
   .toggles .modeswitch svg {
     width: 26px;
@@ -116,6 +125,9 @@ header.container {
   #logo {
     height: 60px;
   }
+  #toast-container {
+      top: 80px;
+  }
   .toggles .modeswitch svg {
     width: 24px;
     height: 24px;
@@ -129,6 +141,9 @@ header.container {
 @media (max-width: 575px) {
   #logo {
     height: 50px;
+  }
+  #toast-container {
+      top: 70px;
   }
   .toggles .modeswitch svg {
     width: 22px;

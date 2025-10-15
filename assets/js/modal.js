@@ -1,20 +1,26 @@
-function initModalBehavior() {
-  const modal = document.getElementById("patternLoaderModal");
-  const openBtn = document.getElementById("openModal");
-  const closeBtns = document.querySelectorAll("#closeModal");
+function initModalBehavior(modalId, openBtnId = null, closeBtnSelector = "#closeModal") {
+  const modal = document.getElementById(modalId);
+  const openBtn = openBtnId ? document.getElementById(openBtnId) : null;
+  const closeBtns = modal.querySelectorAll(closeBtnSelector);
 
-  const patternInput = document.getElementById("patternInput");
+  if (!modal) return;
 
   const openModal = () => {
     modal.style.display = "block";
-    patternInput.focus();
+    const input = modal.querySelector("input");
+    if (input) input.focus();
   };
 
   const closeModal = () => {
     modal.style.display = "none";
   };
 
-  openBtn.addEventListener("click", openModal);
+  if (openBtn) {
+    openBtn.addEventListener("click", openModal);
+  } else {
+    openModal();
+  }
+
   closeBtns.forEach((btn) => btn.addEventListener("click", closeModal));
 
   window.addEventListener("click", (event) => {

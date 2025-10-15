@@ -123,6 +123,34 @@ textarea {
   align-items: center;
 }
 
+#toast-container {
+  position: fixed;
+  right: 20px;
+  z-index: 9999;
+}
+
+@media (max-width: 575px) {
+  #toast-container {
+    right: 50%;
+    transform: translateX(50%);
+  }
+}
+
+.toast {
+  padding: 12px 24px;
+  margin-bottom: 10px;
+  border-radius: 15px;
+  min-width: 200px;
+  opacity: 0;
+  transform: translateX(100%);
+  transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
 /* Open Sans - Normal Styles */
 
 @font-face {
